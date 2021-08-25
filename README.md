@@ -1,6 +1,6 @@
 # Chainlink <> Solana Program deployment demo
 
-This repo will show you how to deploy a Chainlink compatible program to the solana devnet, as well as an account to store data. In Solana, storage and smart contract logic are aggresivly separated. Programs store all the logic (and can be considered the "smart contracts") while accounts will store all the data. 
+This repo shows you how to deploy a Chainlink compatible program to the Solana devnet, as well as an account to store data. In Solana, storage and smart contract logic are aggressively separated. Programs store all the logic (and can be considered the "smart contracts") while accounts will store all the data.
 
 This program & account will be able to read and store price feeds from Solana. Keep in mind, programs are stateless unlike solidity contracts, so often times you won't need to deploy your own program (unlike with EVM contracts where you need to deploy contracts).
 
@@ -19,18 +19,18 @@ You'll know you've done it right if you can run `solana --version`, `git --versi
 solana --version
 solana-cli 1.7.10 (src:03b93051; feat:660526986)
 ```
-And 
+And
 ```
 cargo --version
 cargo 1.54.0 (5ae8d74b3 2021-06-22)
 ```
 And
 ```
-git --verion
+git --version
 git version 2.32.0
 ```
 
-2. Clone this repo 
+2. Clone this repo
 
 ```
 git clone https://github.com/smartcontractkit/chainlink-solana
@@ -45,14 +45,14 @@ solana config set --url https://api.devnet.solana.com
 
 4. Create a [keypair](https://docs.solana.com/terminology#keypair) for your account. This will be your public / private key. **This is an [insecure method for storing keys](https://docs.solana.com/wallet-guide/cli#file-system-wallet-security), please use this account for testing only.**
 
-You'll be prompted for a password. 
+You'll be prompted for a password.
 
 ```
 mkdir solana-wallet
 solana-keygen new --outfile solana-wallet/keypair.json
 ```
 
-5. Fund your account. On devnet we can use a faucet, in mainnet you'll need real SOL token. 
+5. Fund your account. On devnet, we can use a faucet. In mainnet, you'll need real SOL token.
 
 Command line faucet:
 ```
@@ -61,7 +61,7 @@ solana airdrop 5 $(solana-keygen pubkey solana-wallet/keypair.json)
 
 If the command line faucet doesn't work, you can see your public key with:
 ```
-solana-keygen pubkey ./solana-wallet/keypair.json 
+solana-keygen pubkey ./solana-wallet/keypair.json
 ```
 And request tokens from [solfaucet](https://solfaucet.com/).
 
@@ -74,7 +74,7 @@ cargo build-bpf
 7. Deploy the program
 
 ```
-solana program deploy target/deploy/helloworld.so 
+solana program deploy target/deploy/helloworld.so
 ```
 
 You'll see an output like:
@@ -85,11 +85,11 @@ Commitment: confirmed
 Program Id: AZRurZi6N2VTPpFJZ8DB45rCBn2MsBBYaHJfuAS7Tm4v
 ```
 
-You can now take your program Id to the [solana Devnet explorer](https://explorer.solana.com/?cluster=devnet).
+You can now take your program Id to the [Solana Devnet Explorer](https://explorer.solana.com/?cluster=devnet).
 
 # Part 2: Reading from your program
 
-We are going to read from the [SOL / USD price feed](https://explorer.solana.com/address/FmAmfoyPXiA8Vhhe6MZTr3U6rZfEZ1ctEHay1ysqCqcf?cluster=devnet) on the solana devnet. You can find more addresses in the [Chainlink documentation](https://docs.chain.link/docs/solana-price-feeds/).
+We are going to read from the [SOL / USD price feed](https://explorer.solana.com/address/FmAmfoyPXiA8Vhhe6MZTr3U6rZfEZ1ctEHay1ysqCqcf?cluster=devnet) on the Solana Devnet. You can find more addresses in the [Chainlink documentation](https://docs.chain.link/docs/solana-price-feeds/).
 
 
 1. Install requirements
@@ -111,7 +111,7 @@ yarn
 - Connect an account to our program
 - Read the Chainlink price feed from our account
 
-This does require `SOL`, so you may have to run the funding airdrop again. 
+This does require `SOL`, so you may have to run the funding airdrop again.
 
 ```
 yarn start
@@ -131,6 +131,4 @@ Success
 ✨  Done in 22.08s.
 ```
 
-If transactions aren't confirming quickly, you may want to just run `yarn start` again. 
-
-
+If transactions aren't confirming quickly, you may want to just run `yarn start` again.
