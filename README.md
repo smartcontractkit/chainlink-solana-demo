@@ -111,6 +111,12 @@ yarn
 - Connect an account to our program
 - Read the Chainlink price feed from our account
 
+This does require `SOL`, so you may have to run the funding airdrop again. 
+
+```
+yarn start
+```
+
 You'll see an output like so:
 ```
 yarn run v1.22.10
