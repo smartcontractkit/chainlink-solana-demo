@@ -37,7 +37,7 @@ cd chainlink-solana
 solana config set --url https://api.devnet.solana.com
 ```
 
-4. Create a [keypair(https://docs.solana.com/terminology#keypair) for your account. This will be your public / private key. **This is an [insecure method for storing keys](https://docs.solana.com/wallet-guide/cli#file-system-wallet-security), please use this account for testing only.**
+4. Create a [keypair](https://docs.solana.com/terminology#keypair) for your account. This will be your public / private key. **This is an [insecure method for storing keys](https://docs.solana.com/wallet-guide/cli#file-system-wallet-security), please use this account for testing only.**
 
 You'll be prompted for a password. 
 
