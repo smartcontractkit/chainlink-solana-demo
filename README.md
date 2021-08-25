@@ -1,6 +1,12 @@
 # Chainlink <> Solana Program deployment demo
 
-This repo will show you how to deploy a Chainlink compatible program to the solana devnet. This program will be able to read price feeds from Solana. Keep in mind, programs are stateless unlike solidity contracts, so often times you won't need to deploy your own program (unlike with EVM contracts where you need to deploy contracts)
+This repo will show you how to deploy a Chainlink compatible program to the solana devnet, as well as an account to store data. In Solana, storage and smart contract logic are aggresivly separated. Programs store all the logic (and can be considered the "smart contracts") while accounts will store all the data. 
+
+This program & account will be able to read and store price feeds from Solana. Keep in mind, programs are stateless unlike solidity contracts, so often times you won't need to deploy your own program (unlike with EVM contracts where you need to deploy contracts).
+
+# Part 1: Deploying a Program
+
+Keep in mind, you can always skip down to part 2, as in Solana, programs are stateless, so you can feel free to "reuse" other people's deployed programs so long as you know the program ID and the account. At this time, this demo does not explain how to edit the code here without deploying your own program.
 
 1. Install dependencies
 - [Rust](https://www.rust-lang.org/tools/install)
@@ -68,7 +74,7 @@ cargo build-bpf
 7. Deploy the program
 
 ```
-solana deploy -v --keypair solana-wallet/keypair.json target/deploy/helloworld.so
+solana program deploy target/deploy/helloworld.so 
 ```
 
 You'll see an output like:
@@ -81,14 +87,44 @@ Program Id: AZRurZi6N2VTPpFJZ8DB45rCBn2MsBBYaHJfuAS7Tm4v
 
 You can now take your program Id to the [solana Devnet explorer](https://explorer.solana.com/?cluster=devnet).
 
+# Part 2: Reading from your program
 
-## Notes
+We are going to read from the [SOL / USD price feed](https://explorer.solana.com/address/FmAmfoyPXiA8Vhhe6MZTr3U6rZfEZ1ctEHay1ysqCqcf?cluster=devnet) on the solana devnet. You can find more addresses in the [Chainlink documentation](https://docs.chain.link/docs/solana-price-feeds/).
 
-You have to pass the feed address in when you build the contract. 
 
-We have nodes on devnet, and you can just pass in the public key of the contract when you're calling the contract. 
+1. Install requirements
 
-We are reading from the data feed account, each feed has it's own account which stores the state. 
-1. Deploy a Chainlink Data Feed Compatible program
-2. Read from a Chainlink Data Feed with typescript
-3. Future Anchor (Both 1 & 2)
+- [nodejs](https://nodejs.org/en/download/)
+- [yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+
+2. Cd to the client, and install dependencies
+
+```
+cd client
+yarn
+```
+
+3. Run the script, this will:
+
+- Connect you to the devnet cluster (network)
+- Deploy a program
+- Connect an account to our program
+- Read the Chainlink price feed from our account
+
+You'll see an output like so:
+```
+yarn run v1.22.10
+$ ts-node src/main.ts
+Let's work with Chainlink and Solana...
+Connection to cluster established: https://api.devnet.solana.com { 'feature-set': 660526986, 'solana-core': '1.7.10' }
+Using account 9DFe9zpLCLEM35ny4712dZdWk7r84dN6dz3UqrWH9cJF containing 3.72501288 SOL to pay for fees
+Using program Avy7Fahbj8zKtrpS8wGr1kLhEDxyssTYKzAjBgSkJDfU
+Getting data from  D5f6ZriFSAi9JaEwCRU5x2s1XgkkrHZ611Ry3TJDZ6N4
+Current price of SOL/USD is:  72013500000
+Success
+✨  Done in 22.08s.
+```
+
+If transactions aren't confirming quickly, you may want to just run `yarn start` again. 
+
+

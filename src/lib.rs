@@ -1,3 +1,4 @@
+use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
@@ -9,6 +10,13 @@ use solana_program::{
 struct Decimal {
     pub value: u128,
     pub decimals: u32,
+}
+
+/// Define the type of state stored in accounts
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub struct PriceFeedAccount {
+    /// number of greetings
+    pub answer: u128,
 }
 
 impl Decimal {
@@ -38,14 +46,16 @@ entrypoint!(process_instruction);
 
 // Program entrypoint's implementation
 pub fn process_instruction(
-    _program_id: &Pubkey, // Public key of the account the hello world program was loaded into
-    accounts: &[AccountInfo],
-    _instruction_data: &[u8],
+    _program_id: &Pubkey, // Ignored
+    accounts: &[AccountInfo], // Public key of the account to read price data from
+    _instruction_data: &[u8], // Ignored
 ) -> ProgramResult {
     msg!("Hello World Rust program entrypoint");
 
     let accounts_iter = &mut accounts.iter();
-    // This is the address of the price feed
+    // This is the account of our our account
+    let my_account = next_account_info(accounts_iter)?;
+    // This is the account of the price feed data
     let feed_account = next_account_info(accounts_iter)?;
 
     const DECIMALS: u32 = 9;
@@ -58,5 +68,12 @@ pub fn process_instruction(
     } else {
         msg!("No current price");
     }
+    
+     // Store the price ourselves
+     let mut price_data_account = PriceFeedAccount::try_from_slice(&my_account.data.borrow())?;
+     price_data_account.answer = price.unwrap_or(0);
+     price_data_account.serialize(&mut &mut my_account.data.borrow_mut()[..])?;
+     
+
     Ok(())
 }
