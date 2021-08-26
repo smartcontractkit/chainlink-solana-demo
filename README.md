@@ -71,10 +71,10 @@ And request tokens from [solfaucet](https://solfaucet.com/).
 cargo build-bpf
 ```
 
-7. Deploy the program
+7. Deploy the program. The output from the previous step will give you the command to execute to deploy the program. It should look similar to this:
 
 ```
-solana program deploy target/deploy/helloworld.so
+solana program deploy target/deploy/chainlink_solana_demo.so
 ```
 
 You'll see an output like:
