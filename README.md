@@ -33,8 +33,8 @@ git version 2.32.0
 2. Clone this repo
 
 ```
-git clone https://github.com/smartcontractkit/chainlink-solana
-cd chainlink-solana
+git clone https://github.com/smartcontractkit/chainlink-solana-demo
+cd chainlink-solana-demo
 ```
 
 3. Set the solana cluster (network) to [devnet](https://docs.solana.com/clusters#devnet).
@@ -74,7 +74,7 @@ cargo build-bpf
 7. Deploy the program. The output from the previous step will give you the command to execute to deploy the program. It should look similar to this:
 
 ```
-solana program deploy target/deploy/chainlink_solana_demo.so
+solana program deploy target/deploy/chainlink_solana_demo.so --keypair solana-wallet/keypair.json
 ```
 
 You'll see an output like:
