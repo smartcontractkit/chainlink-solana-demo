@@ -1,134 +1,144 @@
 # Chainlink <> Solana Program deployment demo
 
-This repo shows you how to deploy a Chainlink compatible program to the Solana devnet, as well as an account to store data. In Solana, storage and smart contract logic are aggressively separated. Programs store all the logic (and can be considered the "smart contracts") while accounts will store all the data.
+This demo shows you how to deploy a Chainlink compatible program to the [Solana Devnet](https://docs.solana.com/clusters#devnet). You will also deploy an account to store data. In Solana, storage and smart contract logic are aggressively separated. Solana programs are considered "smart contracts", and store all the logic for your program. Accounts store all the data.
 
-This program & account will be able to read and store price feeds from Solana. Keep in mind, programs are stateless unlike solidity contracts, so often times you won't need to deploy your own program (unlike with EVM contracts where you need to deploy contracts).
+This program and account reads and stores price feed data from Solana. Solana programs are stateless, unlike Solidity contracts, so often you do not need to deploy your own program like you do with EVM contracts.
 
-# Part 1: Deploying a Program
+# Part 1: Deploy a Program
 
-Keep in mind, you can always skip down to part 2, as in Solana, programs are stateless, so you can feel free to "reuse" other people's deployed programs so long as you know the program ID and the account. At this time, this demo does not explain how to edit the code here without deploying your own program.
+Build and deploy a program written in Rust that can retrieve price feed data from the [Solana Devnet Feeds](https://docs.chain.link/docs/solana-price-feeds/).
+This program depends on parts of the [smartcontractkit/chainlink-solana](https://github.com/smartcontractkit/chainlink-solana) repository. See the [`Cargo.toml`](https://github.com/smartcontractkit/chainlink-solana-demo/blob/main/Cargo.toml) file for the full list of dependencies.
 
-1. Install dependencies
-- [Rust](https://www.rust-lang.org/tools/install)
-- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools#use-solanas-install-tool)
-- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+Solana programs are stateless. If you know the program ID and the account for a deployed Solana program, you can skip to Part 2 and reuse that deployed program. At this time, this demo does not explain how to edit the code here without deploying your program.
 
-You'll know you've done it right if you can run `solana --version`, `git --version`, and `cargo --version` and see an outputs like:
+1. Install the following dependencies:
 
-```
-solana --version
-solana-cli 1.7.10 (src:03b93051; feat:660526986)
-```
-And
-```
-cargo --version
-cargo 1.54.0 (5ae8d74b3 2021-06-22)
-```
-And
-```
-git --version
-git version 2.32.0
-```
+    - [Rust](https://www.rust-lang.org/tools/install)
+    - [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools#use-solanas-install-tool)
+    - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-2. Clone this repo
+1. Check the installed dependencies to make sure that they function correctly:
 
-```
-git clone https://github.com/smartcontractkit/chainlink-solana-demo
-cd chainlink-solana-demo
-```
+    ```
+    solana --version
+    solana-cli 1.7.10 (src:03b93051; feat:660526986)
+    ```
 
-3. Set the solana cluster (network) to [devnet](https://docs.solana.com/clusters#devnet).
+    ```
+    cargo --version
+    cargo 1.54.0 (5ae8d74b3 2021-06-22)
+    ```
 
-```
-solana config set --url https://api.devnet.solana.com
-```
+    ```
+    git --version
+    git version 2.32.0
+    ```
 
-4. Create a [keypair](https://docs.solana.com/terminology#keypair) for your account. This will be your public / private key. **This is an [insecure method for storing keys](https://docs.solana.com/wallet-guide/cli#file-system-wallet-security), please use this account for testing only.**
+1. Clone the [chainlink-solana-demo](https://github.com/smartcontractkit/chainlink-solana-demo) repository:
 
-You'll be prompted for a password.
+    ```
+    git clone https://github.com/smartcontractkit/chainlink-solana-demo
+    ```
 
-```
-mkdir solana-wallet
-solana-keygen new --outfile solana-wallet/keypair.json
-```
+    ```
+    cd chainlink-solana-demo
+    ```
 
-5. Fund your account. On devnet, we can use a faucet. In mainnet, you'll need real SOL token.
+1. Set the Solana cluster (network) to [Devnet](https://docs.solana.com/clusters#devnet):
 
-Command line faucet:
-```
-solana airdrop 5 $(solana-keygen pubkey solana-wallet/keypair.json)
-```
+    ```
+    solana config set --url https://api.devnet.solana.com
+    ```
 
-If the command line faucet doesn't work, you can see your public key with:
-```
-solana-keygen pubkey ./solana-wallet/keypair.json
-```
-And request tokens from [solfaucet](https://solfaucet.com/).
+1. Create a [keypair](https://docs.solana.com/terminology#keypair) for your account that you can use for testing and development. For production deployments, follow the security best practices for [Command Line Wallets](https://docs.solana.com/wallet-guide/cli#file-system-wallet-security).
 
-6. Build the program
+    ```
+    mkdir solana-wallet
+    ```
 
-```
-cargo build-bpf
-```
+    ```
+    solana-keygen new --outfile ./solana-wallet/keypair.json
+    ```
 
-7. Deploy the program. The output from the previous step will give you the command to execute to deploy the program. It should look similar to this:
+1. Fund your account. On Devnet, you can use `solana airdrop` to add tokens to your account:
 
-```
-solana program deploy target/deploy/chainlink_solana_demo.so --keypair solana-wallet/keypair.json
-```
+    ```
+    solana airdrop 5 $(solana-keygen pubkey solana-wallet/keypair.json)
+    ```
 
-You'll see an output like:
-```
-RPC URL: https://api.devnet.solana.com
-Default Signer Path: solana-wallet/keypair.json
-Commitment: confirmed
-Program Id: AZRurZi6N2VTPpFJZ8DB45rCBn2MsBBYaHJfuAS7Tm4v
-```
+    If the command line faucet doesn't work, use `solana-keygen pubkey` to see your public key value and request tokens from [SolFaucet](https://solfaucet.com/):
 
-You can now take your program Id to the [Solana Devnet Explorer](https://explorer.solana.com/?cluster=devnet).
+    ```
+    solana-keygen pubkey ./solana-wallet/keypair.json
+    ```
 
-# Part 2: Reading from your program
+1. Build the program using the [Solana BPF](https://docs.solana.com/developing/on-chain-programs/developing-rust#project-dependencies):
 
-We are going to read from the [SOL / USD price feed](https://explorer.solana.com/address/FmAmfoyPXiA8Vhhe6MZTr3U6rZfEZ1ctEHay1ysqCqcf?cluster=devnet) on the Solana Devnet. You can find more addresses in the [Chainlink documentation](https://docs.chain.link/docs/solana-price-feeds/).
+    ```
+    cargo build-bpf
+    ```
 
+1. Deploy the program. The output from the previous step will give you the command to execute to deploy the program. It should look similar to this:
 
-1. Install requirements
+    ```
+    solana program deploy target/deploy/chainlink_solana_demo.so --keypair solana-wallet/keypair.json
+    ```
 
-- [nodejs](https://nodejs.org/en/download/)
-- [yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+    If the deployment is successful, it prints your program ID:
+    ```
+    RPC URL: https://api.devnet.solana.com
+    Default Signer Path: solana-wallet/keypair.json
+    Commitment: confirmed
+    Program Id: AZRurZi6N2VTPpFJZ8DB45rCBn2MsBBYaHJfuAS7Tm4v
+    ```
 
-2. Cd to the client, and install dependencies
+1. Copy the program ID and look it up in the [Solana Devnet Explorer](https://explorer.solana.com/?cluster=devnet).
 
-```
-cd client
-yarn
-```
+# Part 2: Read data from your program
 
-3. Run the script, this will:
+For this part, build and run a script that completes the following tasks:
 
-- Connect you to the devnet cluster (network)
-- Deploy a program
-- Connect an account to our program
+- Connect to the Devnet cluster (network)
+- Deploy another program
+- Connect an account to the new program
 - Read the Chainlink price feed from our account
 
-This does require `SOL`, so you may have to run the funding airdrop again.
+This example reads from the [SOL / USD price feed](https://explorer.solana.com/address/FmAmfoyPXiA8Vhhe6MZTr3U6rZfEZ1ctEHay1ysqCqcf?cluster=devnet) on the Solana Devnet. You can find more feed addresses on the [Solana Feeds](https://docs.chain.link/docs/solana-price-feeds/) page in the Chainlink documentation.
 
-```
-yarn start
-```
+1. Install the additional requirements. The client in this Demo uses Node.js and Yarn to interact with your deployed Solana program:
 
-You'll see an output like so:
-```
-yarn run v1.22.10
-$ ts-node src/main.ts
-Let's work with Chainlink and Solana...
-Connection to cluster established: https://api.devnet.solana.com { 'feature-set': 660526986, 'solana-core': '1.7.10' }
-Using account 9DFe9zpLCLEM35ny4712dZdWk7r84dN6dz3UqrWH9cJF containing 3.72501288 SOL to pay for fees
-Using program Avy7Fahbj8zKtrpS8wGr1kLhEDxyssTYKzAjBgSkJDfU
-Getting data from  D5f6ZriFSAi9JaEwCRU5x2s1XgkkrHZ611Ry3TJDZ6N4
-Current price of SOL/USD is:  72013500000
-Success
-✨  Done in 22.08s.
-```
+    - [Node.js](https://nodejs.org/en/download/)
+    - [Yarn](https://classic.yarnpkg.com/en/docs/install/)
 
-If transactions aren't confirming quickly, you may want to just run `yarn start` again.
+1. Change your directory to `client`, and run `yarn` to install Node.js dependencies:
+
+    ```
+    cd client
+    ```
+
+    ```
+    yarn
+    ```
+
+1. Run `yarn start` to execute the script. The script completes the following steps. This does require SOL tokens, so you might need to add more funds to your Devnet account again:
+
+    ```
+    yarn start
+    ```
+
+    If the script executes correctly, you will see output similar to the following example:
+
+    ```
+    yarn run v1.22.10
+    $ ts-node src/main.ts
+    Let's work with Chainlink and Solana...
+    Connection to cluster established: https://api.devnet.solana.com { 'feature-set': 660526986, 'solana-core': '1.7.10' }
+    Using account 9DFe9zpLCLEM35ny4712dZdWk7r84dN6dz3UqrWH9cJF containing 3.72501288 SOL to pay for fees
+    Using program Avy7Fahbj8zKtrpS8wGr1kLhEDxyssTYKzAjBgSkJDfU
+    Getting data from  D5f6ZriFSAi9JaEwCRU5x2s1XgkkrHZ611Ry3TJDZ6N4
+    Current price of SOL/USD is:  72013500000
+    Success
+    ✨  Done in 22.08s.
+    ```
+
+If transactions are not confirming quickly, run `yarn start` again.
