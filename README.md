@@ -1,3 +1,8 @@
+
+> 🚧 Deprecated
+>
+> This example is deprecated. Use the example at https://github.com/smartcontractkit/solana-starter-kit.
+
 # Chainlink <> Solana Program deployment demo
 
 This demo shows you how to deploy a Chainlink compatible program to the [Solana Devnet](https://docs.solana.com/clusters#devnet). You will also deploy an account to store data. In Solana, storage and smart contract logic are aggressively separated. Solana programs are considered "smart contracts", and store all the logic for your program. Accounts store all the data.
